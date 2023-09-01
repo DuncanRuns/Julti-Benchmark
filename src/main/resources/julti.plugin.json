@@ -1,0 +1,6 @@
+{
+  "name": "Benchmark",
+  "id": "benchmark",
+  "version": "${version}",
+  "initializer": "xyz.duncanruns.julti.benchmarkplugin.BenchmarkPlugin"
+}
