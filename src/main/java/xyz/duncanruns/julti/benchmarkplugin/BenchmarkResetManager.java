@@ -9,6 +9,7 @@ import xyz.duncanruns.julti.management.OBSStateManager;
 import xyz.duncanruns.julti.resetting.ActionResult;
 import xyz.duncanruns.julti.resetting.ResetManager;
 import xyz.duncanruns.julti.util.DoAllFastUtil;
+import xyz.duncanruns.julti.util.ResetCounter;
 
 import java.util.Collections;
 import java.util.List;
@@ -75,6 +76,8 @@ public class BenchmarkResetManager extends ResetManager {
         if (!isRunning()) return;
         DoAllFastUtil.doAllFast(instance -> {
             if (instance.getStateTracker().isCurrentState(InstanceState.PREVIEWING) || instance.getStateTracker().isCurrentState(InstanceState.INWORLD)) {
+                JultiOptions.getJultiOptions().resetCounter = previousOptions.resetCounter - 1;
+                ResetCounter.sessionCounter = previousOptions.sessionCounter - 1;
                 instance.reset();
             }
         });
@@ -90,6 +93,7 @@ public class BenchmarkResetManager extends ResetManager {
         previousOptions.autoCalcWallSize = jo.autoCalcWallSize;
         previousOptions.doDirtCovers = jo.doDirtCovers;
         previousOptions.resetCounter = jo.resetCounter;
+        previousOptions.sessionCounter = ResetCounter.sessionCounter;
 
         jo.resetStyle = "Benchmark";
         jo.autoCalcWallSize = true;
@@ -106,5 +110,6 @@ public class BenchmarkResetManager extends ResetManager {
         public boolean doDirtCovers;
         public boolean autoCalcWallSize;
         public int resetCounter;
+        public int sessionCounter;
     }
 }
