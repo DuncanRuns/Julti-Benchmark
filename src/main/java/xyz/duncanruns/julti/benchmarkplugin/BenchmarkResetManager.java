@@ -125,6 +125,13 @@ public class BenchmarkResetManager extends ResetManager {
     }
 
     public void startBenchmark() {
+        InstanceManager instanceManager = InstanceManager.getInstanceManager();
+        instanceManager.checkOpenedInstances();
+        if (instanceManager.areInstancesMissing()) {
+            Julti.log(Level.ERROR,"Could not start benchmark! (All instances need to be open)");
+            return;
+        }
+
         JultiOptions jo = JultiOptions.getJultiOptions();
         previousOptions.resetStyle = jo.resetStyle;
         previousOptions.doDirtCovers = jo.doDirtCovers;
