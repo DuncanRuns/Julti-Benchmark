@@ -1,6 +1,5 @@
 package xyz.duncanruns.julti.benchmarkplugin.gui;
 
-import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.benchmarkplugin.BenchmarkOptions;
 import xyz.duncanruns.julti.benchmarkplugin.BenchmarkResetManager;
 
