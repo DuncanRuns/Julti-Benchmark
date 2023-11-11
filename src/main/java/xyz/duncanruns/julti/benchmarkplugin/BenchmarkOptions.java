@@ -19,6 +19,8 @@ public class BenchmarkOptions {
     private static BenchmarkOptions instance = null;
 
     public int resetGoal = 2000;
+    public String lastResetStyle = "Wall";
+    public boolean lastDoDirtCovers = false;
 
     public static BenchmarkOptions getBenchmarkOptions() {
         return instance;

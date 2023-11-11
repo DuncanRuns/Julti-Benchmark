@@ -8,6 +8,7 @@ import xyz.duncanruns.julti.instance.MinecraftInstance;
 import xyz.duncanruns.julti.management.InstanceManager;
 import xyz.duncanruns.julti.management.OBSStateManager;
 import xyz.duncanruns.julti.resetting.ActionResult;
+import xyz.duncanruns.julti.resetting.ResetHelper;
 import xyz.duncanruns.julti.resetting.ResetManager;
 import xyz.duncanruns.julti.util.DoAllFastUtil;
 import xyz.duncanruns.julti.util.ResetCounter;
@@ -102,10 +103,17 @@ public class BenchmarkResetManager extends ResetManager {
 
     public void endOfTick() {
         OBSStateManager.getOBSStateManager().setLocationToWall();
-        if (!isRunning()) return;
+        JultiOptions jultiOptions = JultiOptions.getJultiOptions();
+        if (!isRunning()) {
+            BenchmarkOptions benchmarkOptions = BenchmarkOptions.getBenchmarkOptions();
+            jultiOptions.resetStyle = benchmarkOptions.lastResetStyle;
+            jultiOptions.doDirtCovers = benchmarkOptions.lastDoDirtCovers;
+            Julti.doLater(() -> ResetHelper.getManager().reload());
+            return;
+        }
         DoAllFastUtil.doAllFast(instance -> {
             if (instance.getStateTracker().isCurrentState(InstanceState.PREVIEWING) || instance.getStateTracker().isCurrentState(InstanceState.INWORLD)) {
-                JultiOptions.getJultiOptions().resetCounter = previousOptions.resetCounter - 1;
+                jultiOptions.resetCounter = previousOptions.resetCounter - 1;
                 ResetCounter.sessionCounter = previousOptions.sessionCounter - 1;
                 instance.reset();
             }

@@ -2,6 +2,7 @@ package xyz.duncanruns.julti.benchmarkplugin;
 
 import com.google.common.io.Resources;
 import xyz.duncanruns.julti.JultiAppLaunch;
+import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.benchmarkplugin.gui.BenchmarkPluginGUI;
 import xyz.duncanruns.julti.command.CommandManager;
 import xyz.duncanruns.julti.gui.JultiGUI;
@@ -42,11 +43,26 @@ public class BenchmarkPlugin implements PluginInitializer {
         BenchmarkOptions.load();
         ResetHelper.registerResetStyle("Benchmark", BenchmarkResetManager::getBenchmarkResetManager);
         PluginEvents.RunnableEventType.END_TICK.register(() -> {
+            checkFallbackOptions();
             if (ResetHelper.getManager() instanceof BenchmarkResetManager) {
                 BenchmarkResetManager.getBenchmarkResetManager().endOfTick();
             }
         });
         CommandManager.getMainManager().registerCommand(new BenchmarkCommand());
+    }
+
+    private static void checkFallbackOptions() {
+        JultiOptions jultiOptions = JultiOptions.getJultiOptions();
+        BenchmarkOptions benchmarkOptions = BenchmarkOptions.getBenchmarkOptions();
+
+        String currentResetStyle = jultiOptions.resetStyle;
+        if (!currentResetStyle.equals("Benchmark")) {
+            if((!benchmarkOptions.lastResetStyle.equals(currentResetStyle)) || (benchmarkOptions.lastDoDirtCovers != jultiOptions.doDirtCovers)){
+                benchmarkOptions.lastResetStyle = currentResetStyle;
+                benchmarkOptions.lastDoDirtCovers = jultiOptions.doDirtCovers;
+                BenchmarkOptions.save();
+            }
+        }
     }
 
     @Override
