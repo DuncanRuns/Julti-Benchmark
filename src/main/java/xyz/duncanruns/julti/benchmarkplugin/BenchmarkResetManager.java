@@ -5,12 +5,14 @@ import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.JultiOptions;
 import xyz.duncanruns.julti.instance.InstanceState;
 import xyz.duncanruns.julti.instance.MinecraftInstance;
+import xyz.duncanruns.julti.management.InstanceManager;
 import xyz.duncanruns.julti.management.OBSStateManager;
 import xyz.duncanruns.julti.resetting.ActionResult;
 import xyz.duncanruns.julti.resetting.ResetManager;
 import xyz.duncanruns.julti.util.DoAllFastUtil;
 import xyz.duncanruns.julti.util.ResetCounter;
 
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,6 +45,34 @@ public class BenchmarkResetManager extends ResetManager {
         }
     }
 
+    @Override
+    public Rectangle getInstancePosition(MinecraftInstance instance, Dimension sceneSize) {
+        List<MinecraftInstance> instances = InstanceManager.getInstanceManager().getInstances();
+
+        int totalRows = (int) Math.max(1, Math.ceil(Math.sqrt(instances.size())));
+        int totalColumns = (int) Math.max(1, Math.ceil(instances.size() / (float) totalRows));
+
+        int instanceInd = instances.indexOf(instance);
+
+        Dimension size = sceneSize == null ? OBSStateManager.getOBSStateManager().getOBSSceneSize() : sceneSize;
+
+        // Using floats here so there won't be any gaps in the wall after converting back to int
+        float iWidth = size.width / (float) totalColumns;
+        float iHeight = size.height / (float) totalRows;
+
+        int row = instanceInd / totalColumns;
+        int col = instanceInd % totalColumns;
+
+        int x = (int) (col * iWidth);
+        int y = (int) (row * iHeight);
+        return new Rectangle(
+                x,
+                y,
+                (int) ((col + 1) * iWidth) - x,
+                (int) ((row + 1) * iHeight) - y
+        );
+    }
+
     private void reportProgress() {
         long currentTime = System.currentTimeMillis();
         int resetGoal = BenchmarkOptions.getBenchmarkOptions().resetGoal;
@@ -66,7 +96,6 @@ public class BenchmarkResetManager extends ResetManager {
 
         JultiOptions jo = JultiOptions.getJultiOptions();
         jo.resetStyle = previousOptions.resetStyle;
-        jo.autoCalcWallSize = previousOptions.autoCalcWallSize;
         jo.doDirtCovers = previousOptions.doDirtCovers;
         jo.resetCounter = previousOptions.resetCounter;
     }
@@ -90,15 +119,12 @@ public class BenchmarkResetManager extends ResetManager {
     public void startBenchmark() {
         JultiOptions jo = JultiOptions.getJultiOptions();
         previousOptions.resetStyle = jo.resetStyle;
-        previousOptions.autoCalcWallSize = jo.autoCalcWallSize;
         previousOptions.doDirtCovers = jo.doDirtCovers;
         previousOptions.resetCounter = jo.resetCounter;
         previousOptions.sessionCounter = ResetCounter.sessionCounter;
 
         jo.resetStyle = "Benchmark";
-        jo.autoCalcWallSize = true;
         jo.doDirtCovers = false;
-
 
         startTime = System.currentTimeMillis();
         DoAllFastUtil.doAllFast(MinecraftInstance::reset);
@@ -108,7 +134,6 @@ public class BenchmarkResetManager extends ResetManager {
     private static final class PreviousOptions {
         public String resetStyle;
         public boolean doDirtCovers;
-        public boolean autoCalcWallSize;
         public int resetCounter;
         public int sessionCounter;
     }
