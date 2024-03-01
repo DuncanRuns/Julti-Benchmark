@@ -3,6 +3,7 @@ package xyz.duncanruns.julti.benchmarkplugin;
 import com.google.common.io.Resources;
 import xyz.duncanruns.julti.JultiAppLaunch;
 import xyz.duncanruns.julti.JultiOptions;
+import xyz.duncanruns.julti.affinity.AffinityManager;
 import xyz.duncanruns.julti.benchmarkplugin.gui.BenchmarkPluginGUI;
 import xyz.duncanruns.julti.command.CommandManager;
 import xyz.duncanruns.julti.gui.JultiGUI;
@@ -64,6 +65,7 @@ public class BenchmarkPlugin implements PluginInitializer {
             }
         });
         ResetCounter.registerLockCondition(() -> ResetHelper.getManager() instanceof BenchmarkResetManager);
+        AffinityManager.registerLockCondition(() -> ResetHelper.getManager() instanceof BenchmarkResetManager);
         CommandManager.getMainManager().registerCommand(new BenchmarkCommand());
     }
 
