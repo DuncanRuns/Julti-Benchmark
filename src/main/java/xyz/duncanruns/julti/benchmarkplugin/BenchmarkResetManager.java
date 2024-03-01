@@ -46,6 +46,11 @@ public class BenchmarkResetManager extends ResetManager {
     }
 
     @Override
+    public void notifyWorldLoaded(MinecraftInstance instance) {
+        resetInstanceFast(instance);
+    }
+
+    @Override
     public Rectangle getInstancePosition(MinecraftInstance instance, Dimension sceneSize) {
         List<MinecraftInstance> instances = InstanceManager.getInstanceManager().getInstances();
 
