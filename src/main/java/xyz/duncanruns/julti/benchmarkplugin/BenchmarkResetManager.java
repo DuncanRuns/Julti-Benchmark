@@ -137,6 +137,7 @@ public class BenchmarkResetManager extends ResetManager {
 
         startTime = System.currentTimeMillis();
         DoAllFastUtil.doAllFast(MinecraftInstance::reset);
+        AffinityManager.release();
         Julti.log(Level.INFO, "Running benchmark...");
     }
 
