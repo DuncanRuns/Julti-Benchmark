@@ -11,6 +11,7 @@ import xyz.duncanruns.julti.plugin.PluginEvents;
 import xyz.duncanruns.julti.plugin.PluginInitializer;
 import xyz.duncanruns.julti.plugin.PluginManager;
 import xyz.duncanruns.julti.resetting.ResetHelper;
+import xyz.duncanruns.julti.util.ResetCounter;
 
 import java.awt.*;
 import java.io.IOException;
@@ -38,6 +39,20 @@ public class BenchmarkPlugin implements PluginInitializer {
         return gui;
     }
 
+    private static void checkFallbackOptions() {
+        JultiOptions jultiOptions = JultiOptions.getJultiOptions();
+        BenchmarkOptions benchmarkOptions = BenchmarkOptions.getBenchmarkOptions();
+
+        String currentResetStyle = jultiOptions.resetStyle;
+        if (!currentResetStyle.equals("Benchmark")) {
+            if ((!benchmarkOptions.lastResetStyle.equals(currentResetStyle)) || (benchmarkOptions.lastDoDirtCovers != jultiOptions.doDirtCovers)) {
+                benchmarkOptions.lastResetStyle = currentResetStyle;
+                benchmarkOptions.lastDoDirtCovers = jultiOptions.doDirtCovers;
+                BenchmarkOptions.save();
+            }
+        }
+    }
+
     @Override
     public void initialize() {
         BenchmarkOptions.load();
@@ -48,21 +63,8 @@ public class BenchmarkPlugin implements PluginInitializer {
                 BenchmarkResetManager.getBenchmarkResetManager().endOfTick();
             }
         });
+        ResetCounter.registerLockCondition(() -> ResetHelper.getManager() instanceof BenchmarkResetManager);
         CommandManager.getMainManager().registerCommand(new BenchmarkCommand());
-    }
-
-    private static void checkFallbackOptions() {
-        JultiOptions jultiOptions = JultiOptions.getJultiOptions();
-        BenchmarkOptions benchmarkOptions = BenchmarkOptions.getBenchmarkOptions();
-
-        String currentResetStyle = jultiOptions.resetStyle;
-        if (!currentResetStyle.equals("Benchmark")) {
-            if((!benchmarkOptions.lastResetStyle.equals(currentResetStyle)) || (benchmarkOptions.lastDoDirtCovers != jultiOptions.doDirtCovers)){
-                benchmarkOptions.lastResetStyle = currentResetStyle;
-                benchmarkOptions.lastDoDirtCovers = jultiOptions.doDirtCovers;
-                BenchmarkOptions.save();
-            }
-        }
     }
 
     @Override

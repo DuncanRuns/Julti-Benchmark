@@ -11,7 +11,6 @@ import xyz.duncanruns.julti.resetting.ActionResult;
 import xyz.duncanruns.julti.resetting.ResetHelper;
 import xyz.duncanruns.julti.resetting.ResetManager;
 import xyz.duncanruns.julti.util.DoAllFastUtil;
-import xyz.duncanruns.julti.util.ResetCounter;
 
 import java.awt.*;
 import java.util.Collections;
@@ -98,7 +97,6 @@ public class BenchmarkResetManager extends ResetManager {
         JultiOptions jo = JultiOptions.getJultiOptions();
         jo.resetStyle = previousOptions.resetStyle;
         jo.doDirtCovers = previousOptions.doDirtCovers;
-        jo.resetCounter = previousOptions.resetCounter;
     }
 
     public void endOfTick() {
@@ -113,8 +111,6 @@ public class BenchmarkResetManager extends ResetManager {
         }
         DoAllFastUtil.doAllFast(instance -> {
             if (instance.getStateTracker().isCurrentState(InstanceState.PREVIEWING) || instance.getStateTracker().isCurrentState(InstanceState.INWORLD)) {
-                jultiOptions.resetCounter = previousOptions.resetCounter - 1;
-                ResetCounter.sessionCounter = previousOptions.sessionCounter - 1;
                 instance.reset();
             }
         });
@@ -135,8 +131,6 @@ public class BenchmarkResetManager extends ResetManager {
         JultiOptions jo = JultiOptions.getJultiOptions();
         previousOptions.resetStyle = jo.resetStyle;
         previousOptions.doDirtCovers = jo.doDirtCovers;
-        previousOptions.resetCounter = jo.resetCounter;
-        previousOptions.sessionCounter = ResetCounter.sessionCounter;
 
         jo.resetStyle = "Benchmark";
         jo.doDirtCovers = false;
@@ -149,7 +143,5 @@ public class BenchmarkResetManager extends ResetManager {
     private static final class PreviousOptions {
         public String resetStyle;
         public boolean doDirtCovers;
-        public int resetCounter;
-        public int sessionCounter;
     }
 }
