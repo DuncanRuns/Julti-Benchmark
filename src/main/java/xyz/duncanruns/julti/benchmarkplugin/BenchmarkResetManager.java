@@ -3,7 +3,7 @@ package xyz.duncanruns.julti.benchmarkplugin;
 import org.apache.logging.log4j.Level;
 import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.JultiOptions;
-import xyz.duncanruns.julti.instance.InstanceState;
+import xyz.duncanruns.julti.affinity.AffinityManager;
 import xyz.duncanruns.julti.instance.MinecraftInstance;
 import xyz.duncanruns.julti.management.InstanceManager;
 import xyz.duncanruns.julti.management.OBSStateManager;
@@ -33,9 +33,9 @@ public class BenchmarkResetManager extends ResetManager {
 
     @Override
     public void notifyPreviewLoaded(MinecraftInstance instance) {
+        resetInstanceFast(instance);
         super.notifyPreviewLoaded(instance);
         if (!isRunning()) return;
-        // Instead of calling reset here, we do it at the end of the tick so that all instances which need resetting can be processed in parallel
         previewsLoaded++;
 
         if (previewsLoaded >= BenchmarkOptions.getBenchmarkOptions().resetGoal) {
@@ -107,13 +107,7 @@ public class BenchmarkResetManager extends ResetManager {
             jultiOptions.resetStyle = benchmarkOptions.lastResetStyle;
             jultiOptions.doDirtCovers = benchmarkOptions.lastDoDirtCovers;
             Julti.doLater(() -> ResetHelper.getManager().reload());
-            return;
         }
-        DoAllFastUtil.doAllFast(instance -> {
-            if (instance.getStateTracker().isCurrentState(InstanceState.PREVIEWING) || instance.getStateTracker().isCurrentState(InstanceState.INWORLD)) {
-                instance.reset();
-            }
-        });
     }
 
     private boolean isRunning() {
@@ -124,7 +118,7 @@ public class BenchmarkResetManager extends ResetManager {
         InstanceManager instanceManager = InstanceManager.getInstanceManager();
         instanceManager.checkOpenedInstances();
         if (instanceManager.areInstancesMissing()) {
-            Julti.log(Level.ERROR,"Could not start benchmark! (All instances need to be open)");
+            Julti.log(Level.ERROR, "Could not start benchmark! (All instances need to be open)");
             return;
         }
 
@@ -136,9 +130,13 @@ public class BenchmarkResetManager extends ResetManager {
         jo.doDirtCovers = false;
 
         startTime = System.currentTimeMillis();
-        DoAllFastUtil.doAllFast(MinecraftInstance::reset);
+        DoAllFastUtil.doAllFast(BenchmarkResetManager::resetInstanceFast);
         AffinityManager.release();
         Julti.log(Level.INFO, "Running benchmark...");
+    }
+
+    private static void resetInstanceFast(MinecraftInstance instance) {
+        instance.getKeyPresser().pressKey(instance.getGameOptions().createWorldKey);
     }
 
     private static final class PreviousOptions {
