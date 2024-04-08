@@ -120,6 +120,15 @@ public class BenchmarkResetManager extends ResetManager {
     }
 
     public void startBenchmark() {
+        JultiOptions jo = JultiOptions.getJultiOptions();
+        if (isRunning()) {
+            if (jo.resetStyle.equals("Benchmark")) {
+                return;
+            } else {
+                endBenchmark();
+            }
+        }
+
         InstanceManager instanceManager = InstanceManager.getInstanceManager();
         instanceManager.checkOpenedInstances();
         if (instanceManager.areInstancesMissing()) {
@@ -127,7 +136,6 @@ public class BenchmarkResetManager extends ResetManager {
             return;
         }
 
-        JultiOptions jo = JultiOptions.getJultiOptions();
         previousOptions.resetStyle = jo.resetStyle;
         previousOptions.doDirtCovers = jo.doDirtCovers;
 
