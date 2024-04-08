@@ -1,5 +1,6 @@
 package xyz.duncanruns.julti.benchmarkplugin;
 
+import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.cancelrequester.CancelRequester;
 import xyz.duncanruns.julti.command.Command;
 
@@ -28,6 +29,10 @@ public class BenchmarkCommand extends Command {
 
     @Override
     public void run(String[] args, CancelRequester cancelRequester) {
+        Julti.waitForExecute(() -> internalRun(args));
+    }
+
+    private static void internalRun(String[] args) {
         if (args.length == 1) {
             if (args[0].equals("end")) {
                 BenchmarkResetManager.getBenchmarkResetManager().endBenchmark();
