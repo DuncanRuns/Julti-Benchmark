@@ -12,6 +12,7 @@ import xyz.duncanruns.julti.plugin.PluginEvents;
 import xyz.duncanruns.julti.plugin.PluginInitializer;
 import xyz.duncanruns.julti.plugin.PluginManager;
 import xyz.duncanruns.julti.resetting.ResetHelper;
+import xyz.duncanruns.julti.script.lua.LuaLibraries;
 import xyz.duncanruns.julti.util.ResetCounter;
 
 import java.awt.*;
@@ -67,6 +68,7 @@ public class BenchmarkPlugin implements PluginInitializer {
         ResetCounter.registerLockCondition(() -> ResetHelper.getManager() instanceof BenchmarkResetManager);
         AffinityManager.registerLockCondition(() -> ResetHelper.getManager() instanceof BenchmarkResetManager);
         CommandManager.getMainManager().registerCommand(new BenchmarkCommand());
+        LuaLibraries.registerLuaLibrary(BenchmarkLuaLibrary::new);
     }
 
     @Override
