@@ -1,5 +1,6 @@
 package xyz.duncanruns.julti.benchmarkplugin.gui;
 
+import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.benchmarkplugin.BenchmarkOptions;
 import xyz.duncanruns.julti.benchmarkplugin.BenchmarkResetManager;
 
@@ -43,7 +44,7 @@ public class BenchmarkPluginGUI extends JFrame {
             }
         });
         startBenchmarkButton.addActionListener(ignored -> {
-            BenchmarkResetManager.getBenchmarkResetManager().startBenchmark();
+            Julti.waitForExecute(() -> BenchmarkResetManager.getBenchmarkResetManager().startBenchmark());
         });
 
         endBenchmarkButton.addActionListener(ignored -> BenchmarkResetManager.getBenchmarkResetManager().endBenchmark());
