@@ -5,6 +5,17 @@ import xyz.duncanruns.julti.cancelrequester.CancelRequester;
 import xyz.duncanruns.julti.command.Command;
 
 public class BenchmarkCommand extends Command {
+    private static void internalRun(String[] args) {
+        if (args.length == 1) {
+            if (args[0].equals("end")) {
+                BenchmarkResetManager.getBenchmarkResetManager().endBenchmark();
+                return;
+            }
+            BenchmarkOptions.getBenchmarkOptions().resetGoal = Integer.parseInt(args[0]);
+        }
+        BenchmarkResetManager.getBenchmarkResetManager().startBenchmark();
+    }
+
     @Override
     public String helpDescription() {
         return "benchmark - Starts a benchmark with the existing reset goal\n" +
@@ -30,16 +41,5 @@ public class BenchmarkCommand extends Command {
     @Override
     public void run(String[] args, CancelRequester cancelRequester) {
         Julti.waitForExecute(() -> internalRun(args));
-    }
-
-    private static void internalRun(String[] args) {
-        if (args.length == 1) {
-            if (args[0].equals("end")) {
-                BenchmarkResetManager.getBenchmarkResetManager().endBenchmark();
-                return;
-            }
-            BenchmarkOptions.getBenchmarkOptions().resetGoal = Integer.parseInt(args[0]);
-        }
-        BenchmarkResetManager.getBenchmarkResetManager().startBenchmark();
     }
 }

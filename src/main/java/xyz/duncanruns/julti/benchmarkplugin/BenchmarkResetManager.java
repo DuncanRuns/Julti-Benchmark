@@ -26,6 +26,10 @@ public class BenchmarkResetManager extends ResetManager {
         return INSTANCE;
     }
 
+    private static void resetInstanceFast(MinecraftInstance instance) {
+        instance.getKeyPresser().pressKey(instance.getGameOptions().createWorldKey);
+    }
+
     @Override
     public List<ActionResult> doReset() {
         return Collections.emptyList();
@@ -146,10 +150,6 @@ public class BenchmarkResetManager extends ResetManager {
         DoAllFastUtil.doAllFast(BenchmarkResetManager::resetInstanceFast);
         AffinityManager.release();
         Julti.log(Level.INFO, "Running benchmark...");
-    }
-
-    private static void resetInstanceFast(MinecraftInstance instance) {
-        instance.getKeyPresser().pressKey(instance.getGameOptions().createWorldKey);
     }
 
     private static final class PreviousOptions {
