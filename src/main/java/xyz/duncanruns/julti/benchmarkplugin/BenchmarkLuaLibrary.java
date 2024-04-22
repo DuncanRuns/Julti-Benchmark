@@ -17,7 +17,7 @@ public class BenchmarkLuaLibrary extends LuaLibrary {
         Julti.waitForExecute(() -> BenchmarkResetManager.getBenchmarkResetManager().startBenchmark());
     }
 
-    public void end() {
+    public void stop() {
         Julti.waitForExecute(() -> BenchmarkResetManager.getBenchmarkResetManager().endBenchmark());
     }
 
