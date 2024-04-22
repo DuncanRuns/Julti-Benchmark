@@ -4,6 +4,7 @@ import xyz.duncanruns.julti.Julti;
 import xyz.duncanruns.julti.cancelrequester.CancelRequester;
 import xyz.duncanruns.julti.script.lua.LuaLibrary;
 
+@SuppressWarnings("unused")
 public class BenchmarkLuaLibrary extends LuaLibrary {
     public BenchmarkLuaLibrary(CancelRequester requester) {
         super(requester, "benchmark");
