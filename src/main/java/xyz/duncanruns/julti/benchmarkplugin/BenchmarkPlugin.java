@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 public class BenchmarkPlugin implements PluginInitializer {
 
     public static BenchmarkPluginGUI gui = null;
+    public static float lastRPS = 0;
 
     public static void main(String[] args) throws IOException {
         JultiAppLaunch.launchWithDevPlugin(args, PluginManager.JultiPluginData.fromString(

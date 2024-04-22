@@ -100,6 +100,7 @@ public class BenchmarkResetManager extends ResetManager {
         float secondsElapsed = millisElapsed / 1000f;
         float rps = previewsLoaded / secondsElapsed;
         Julti.log(Level.INFO, String.format("Benchmark ended! Finished %d preview loads in %.2f seconds. RPS: %.2f", previewsLoaded, secondsElapsed, rps));
+        BenchmarkPlugin.lastRPS = rps;
         previewsLoaded = 0;
         startTime = -1L;
 
@@ -119,7 +120,7 @@ public class BenchmarkResetManager extends ResetManager {
         }
     }
 
-    private boolean isRunning() {
+    public boolean isRunning() {
         return startTime != -1L;
     }
 
